@@ -4,6 +4,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser, removeUser } from '../utils/userSlice';
+import { LOGO } from '../utils/constrants';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -19,7 +20,7 @@ const Header = () => {
   };
 
   useEffect(() =>{
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in,
         const {uid,email,displayName} = user;
@@ -31,14 +32,15 @@ const Header = () => {
        navigate("/")
       }
     });
-    
+    // unsubscribe when component unmounts
+    return () => unsubscribe();
   }, [])
 
   return (
     <div className='flex justify-between absolute w-screen px-8 py-4 bg-gradient-to-b from-black z-10'>        
         <img 
         className='w-44'
-        src='https://youareawful.com/img/streamberry.a33c452d.svg'
+        src={LOGO}
         alt='logo'
         />
         {user && <div className='flex'>
